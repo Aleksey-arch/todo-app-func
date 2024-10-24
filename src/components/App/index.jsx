@@ -3,14 +3,21 @@ import { NewTaskForm } from '../NewTaskForm'
 import { TaskList } from '../TaskList'
 import { Footer } from '../Footer'
 import { useEffect, useState } from 'react'
+import { formatDistanceToNow } from 'date-fns'
 
 export default function App() {
-
   const [todoData, setTodoData] = useState([])
+  const [selectedTodoData, setSelectedTodoData] = useState([])
   const [taskCount, setTaskCount] = useState(0)
+  const [selectedFilter, setSelectedFilter] = useState('All')
 
+  const handleFilterClick = (filter) => {
+    setSelectedFilter(filter)
+    onFilters(filter)
+  }
   useEffect(() => {
     countTasks()
+    handleFilterClick(selectedFilter)
   }, [todoData])
 
   const addTask = (inputValue) => {
@@ -20,15 +27,36 @@ export default function App() {
   const onDeleted = (id) => {
     const index = todoData.findIndex(el => el.id === id)
     setTodoData([...todoData.slice(0, index), ...todoData.slice(index + 1)])
-    
+  }
+  const onDeletedAll = () => {
+    const newArr = todoData.filter((item) => item.active !== false)
+    setTodoData(newArr)
+  }
+
+  const onFilters = (filter) => {
+    if (filter === 'Active') {
+      const activeArr = todoData.filter(el => el.active === true)
+      setSelectedTodoData([...activeArr])
+    } else if (filter === 'Complected') {
+      const deActiveArr = todoData.filter(el => el.active === false)
+      setSelectedTodoData([...deActiveArr])
+    } else if (filter === 'All') {
+      setSelectedTodoData([...todoData])
+    }
   }
 
   const createNewTask = (text, id) => {
     return {
       text,
       id,
-      active: true
+      active: true,
+      createdAt: new Date(),
+
     }
+  }
+
+  const formatTimeDifference = (createdAt) => {
+    return formatDistanceToNow(createdAt, { addSuffix: true });
   }
 
   const countTasks = () => {
@@ -45,7 +73,6 @@ export default function App() {
       ...todoData.slice(index + 1),
     ];
     setTodoData(newArr)
-    
   }
 
   return (
@@ -56,11 +83,18 @@ export default function App() {
       </header>
       <div className={classes.main}>
         <TaskList
-          todoData={todoData}
+          selectedTodoData={selectedTodoData}
           onToggleClick={onToggleClick}
           onDeleted={onDeleted}
+          formatTimeDifference={formatTimeDifference}
         />
-        <Footer taskCount={taskCount} />
+        <Footer
+          taskCount={taskCount}
+          onDeletedAll={onDeletedAll}
+          onFilters={onFilters}
+          selectedFilter={selectedFilter}
+          handleFilterClick={handleFilterClick}
+        />
       </div>
     </div>
   );

@@ -1,16 +1,17 @@
 
 import { Task } from '../Task'
 
-export function TaskList({ todoData, onToggleClick, onDeleted }) {
+export function TaskList({ selectedTodoData, onToggleClick, onDeleted, formatTimeDifference }) {
 
   return (
     <div >
-      {todoData.map((task) => (
+      {selectedTodoData.map((task) => (
         <Task
           key={task.id}
           task={task}
           onToggleClick={() => onToggleClick(task.id)}
           onDeleted={() => onDeleted(task.id)}
+          formatTimeDifference={formatTimeDifference}
         />
       ))}
     </div>

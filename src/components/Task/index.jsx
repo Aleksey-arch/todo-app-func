@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import classes from './index.module.css'
 
-export function Task({ task, onToggleClick, onDeleted }) {
+export function Task({ task, onToggleClick, onDeleted, formatTimeDifference }) {
   const [isActive, setIsActive] = useState(task.active);
 
   const className = isActive ? classes.active : classes.completed;
@@ -15,7 +15,7 @@ export function Task({ task, onToggleClick, onDeleted }) {
         }} />
         <label className={classes.label_span}>
           <span className={[classes.description, className].join(' ')}>{task.text}</span>
-          <span className={classes.created}>created 5 minutes ago</span>
+          <span className={classes.created}>{formatTimeDifference(task.createdAt)}</span>
         </label>
         <button className={[classes.icon, classes.icon_edit].join(' ')} />
         <button

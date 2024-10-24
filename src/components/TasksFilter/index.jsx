@@ -1,16 +1,28 @@
+import { useState } from 'react';
 import classes from './index.module.css'
 
-export function TasksFilter() {
+export function TasksFilter({ selectedFilter, handleFilterClick }) {
+
+
   return (
     <ul className={classes.filters}>
       <li>
-        <button className={classes.selected}>All</button>
+        <button
+          className={[selectedFilter === 'All' ? classes.selected : ''].join(' ')}
+          onClick={() => handleFilterClick('All')}
+        >All</button>
       </li>
       <li>
-        <button>Active</button>
+        <button
+          className={[selectedFilter === 'Active' ? classes.selected : ''].join(' ')}
+          onClick={() => handleFilterClick('Active')}
+        >Active</button>
       </li>
       <li>
-        <button>Completed</button>
+        <button
+          className={[selectedFilter === 'Complected' ? classes.selected : ''].join(' ')}
+          onClick={() => handleFilterClick('Complected')}
+        >Completed</button>
       </li>
     </ul>
   );
