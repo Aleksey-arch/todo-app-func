@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import classes from './index.module.css'
+
+import classes from './index.module.css';
 
 export function Task({ task, onToggleClick, onDeleted, formatTimeDifference }) {
   const [isActive, setIsActive] = useState(task.active);
@@ -9,22 +10,22 @@ export function Task({ task, onToggleClick, onDeleted, formatTimeDifference }) {
   return (
     <li className={classes.li_task}>
       <div className={classes.task}>
-        <input className={classes.toggle} type="checkbox" onClick={() => {
-          setIsActive(!isActive);
-          onToggleClick();
-        }} />
+        <input
+          className={classes.toggle}
+          type="checkbox"
+          onClick={() => {
+            setIsActive(!isActive);
+            onToggleClick();
+          }}
+        />
         <label className={classes.label_span}>
           <span className={[classes.description, className].join(' ')}>{task.text}</span>
-          <span className={classes.created}>{formatTimeDifference(task.createdAt)}</span>
+          <span className={classes.created}>created {formatTimeDifference(task.createdAt)}</span>
         </label>
         <button className={[classes.icon, classes.icon_edit].join(' ')} />
-        <button
-          className={[classes.icon, classes.icon_destroy].join(' ')}
-          onClick={onDeleted}
-        />
+        <button className={[classes.icon, classes.icon_destroy].join(' ')} onClick={onDeleted} />
       </div>
       <input className={classes.input_edit} />
     </li>
   );
 }
-

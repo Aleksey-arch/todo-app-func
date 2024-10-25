@@ -1,24 +1,21 @@
-import { useState } from 'react'
-import classes from './index.module.css'
+import { useState } from 'react';
 
-export function NewTaskForm({addTask}) {
+import classes from './index.module.css';
 
-  const [inputValue, setInputValue] = useState('')
+export function NewTaskForm({ addTask }) {
+  const [inputValue, setInputValue] = useState('');
 
   const onInputChange = (e) => {
-    setInputValue(e.target.value)
-  }
+    setInputValue(e.target.value);
+  };
   const onSubmit = (e) => {
-    e.preventDefault()
-    addTask(inputValue)
-    setInputValue('')
-  }
+    e.preventDefault();
+    addTask(inputValue);
+    setInputValue('');
+  };
 
   return (
-    <form 
-    className={classes.new_task_form}
-    onSubmit={onSubmit}
-    >
+    <form className={classes.new_task_form} onSubmit={onSubmit}>
       <input
         className={classes.new_todo}
         placeholder="What needs to be done?"
@@ -29,4 +26,3 @@ export function NewTaskForm({addTask}) {
     </form>
   );
 }
-
