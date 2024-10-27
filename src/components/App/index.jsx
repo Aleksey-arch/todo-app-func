@@ -23,8 +23,12 @@ export default function App() {
   }, [todoData]);
 
   const addTask = (inputValue) => {
-    setTodoData([...todoData, createNewTask(inputValue, Date.now())]);
-    countTasks(todoData);
+    if (inputValue.trim().length === 0) {
+      alert('Поле не может быть пустым.');
+    } else {
+      setTodoData([...todoData, createNewTask(inputValue, Date.now())]);
+      countTasks(todoData);
+    }
   };
   const onDeleted = (id) => {
     const index = todoData.findIndex((el) => el.id === id);
@@ -33,6 +37,31 @@ export default function App() {
   const onDeletedAll = () => {
     const newArr = todoData.filter((item) => item.active !== false);
     setTodoData(newArr);
+  };
+  const onEdit = (id) => {
+    const index = todoData.findIndex((el) => el.id === id);
+    const oldItem = todoData[index];
+    const newItem = { ...oldItem, inputEditCondition: !oldItem.inputEditCondition };
+    const newArr = [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)];
+    setTodoData(newArr);
+  };
+
+  const onInputEdit = (inputValue, id) => {
+    if (inputValue.trim().length === 0) {
+      const index = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[index];
+      const newItem = { ...oldItem, inputEditCondition: !oldItem.inputEditCondition };
+      const newArr = [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)];
+      setTodoData(newArr);
+
+      alert('Поле не может быть пустым.');
+    } else {
+      const index = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[index];
+      const newItem = { ...oldItem, inputEditCondition: !oldItem.inputEditCondition, text: inputValue };
+      const newArr = [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)];
+      setTodoData(newArr);
+    }
   };
 
   const onFilters = (filter) => {
@@ -53,6 +82,7 @@ export default function App() {
       id,
       active: true,
       createdAt: new Date(),
+      inputEditCondition: false,
     };
   };
 
@@ -84,6 +114,8 @@ export default function App() {
           onToggleClick={onToggleClick}
           onDeleted={onDeleted}
           formatTimeDifference={formatTimeDifference}
+          onEdit={onEdit}
+          onInputEdit={onInputEdit}
         />
         <Footer
           taskCount={taskCount}
