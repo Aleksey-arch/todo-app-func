@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 
 import { NewTaskForm } from '../NewTaskForm';
@@ -13,6 +13,12 @@ export default function App() {
   const [taskCount, setTaskCount] = useState(0);
   const [selectedFilter, setSelectedFilter] = useState('All');
 
+  const [conditionTimer, setConditionTimer] = useState(false);
+
+  const [secondsRemaining, setSecondsRemaining] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const intervalRef = useRef(null);
+
   const handleFilterClick = (filter) => {
     setSelectedFilter(filter);
     onFilters(filter);
@@ -22,11 +28,27 @@ export default function App() {
     handleFilterClick(selectedFilter);
   }, [todoData]);
 
-  const addTask = (inputValue) => {
+  // useEffect(() => {
+  //   if (selectedTask) {
+  //     console.log(secondsRemaining);
+  //     const prevTask = selectedTask.id;
+  //     const indexPrevTask = todoData.findIndex((el) => el.id === prevTask);
+  //     const oldItem = todoData[indexPrevTask];
+  //     const newItem = { ...oldItem, allSeconds: secondsRemaining };
+  //     const newArr = [...todoData.slice(0, indexPrevTask), newItem, ...todoData.slice(indexPrevTask + 1)];
+  //     setTodoData(newArr);
+  //   }
+  // }, [secondsRemaining]);
+
+  const addTask = (inputValue, allSeconds) => {
+    if (allSeconds === 0) {
+      allSeconds = 900;
+    }
+
     if (inputValue.trim().length === 0) {
       alert('Поле не может быть пустым.');
     } else {
-      setTodoData([...todoData, createNewTask(inputValue, Date.now())]);
+      setTodoData([...todoData, createNewTask(inputValue, Date.now(), allSeconds)]);
       countTasks(todoData);
     }
   };
@@ -76,13 +98,14 @@ export default function App() {
     }
   };
 
-  const createNewTask = (text, id) => {
+  const createNewTask = (text, id, allSeconds) => {
     return {
       text,
       id,
       active: true,
       createdAt: new Date(),
       inputEditCondition: false,
+      allSeconds,
     };
   };
 
@@ -102,9 +125,56 @@ export default function App() {
     setTodoData(newArr);
   };
 
+  const startTimer = (allSeconds) => {
+    setSecondsRemaining(allSeconds);
+    intervalRef.current = setInterval(() => {
+      setSecondsRemaining((prevSeconds) => {
+        if (prevSeconds > 0) {
+          return prevSeconds - 1;
+        } else {
+          setConditionTimer(false);
+          clearInterval(intervalRef.current);
+          return 0;
+        }
+      });
+    }, 1000);
+  };
+
+  const toChangeConditionTimerPlay = (elem) => {
+    setConditionTimer(true);
+    const index = todoData.findIndex((el) => el.id === elem);
+    const timerTask = todoData[index];
+    setSelectedTask(timerTask);
+    setSecondsRemaining(timerTask.allSeconds);
+  };
+  useEffect(() => {
+    if (conditionTimer) {
+      startTimer(secondsRemaining);
+    } else {
+      clearInterval(intervalRef.current);
+    }
+  }, [conditionTimer]);
+  useEffect(() => {
+    if (conditionTimer) {
+      const idSelectTask = selectedTask.id;
+
+      const index = todoData.findIndex((el) => el.id === idSelectTask);
+      const oldItem = todoData[index];
+      const newItem = { ...oldItem, allSeconds: secondsRemaining };
+      const newArr = [...todoData.slice(0, index), newItem, ...todoData.slice(index + 1)];
+      setTodoData(newArr);
+    }
+  }, [secondsRemaining]);
+
+  const toChangeConditionTimerPause = () => {
+    setConditionTimer(false);
+  };
+
+  // ////////////////////////////////////////////////////////////////////////////////
+
   return (
     <div className={classes.todo_app}>
-      <header className={classes.header}>
+      <header>
         <h1>todos</h1>
         <NewTaskForm addTask={addTask} />
       </header>
@@ -116,6 +186,8 @@ export default function App() {
           formatTimeDifference={formatTimeDifference}
           onEdit={onEdit}
           onInputEdit={onInputEdit}
+          toChangeConditionTimerPlay={toChangeConditionTimerPlay}
+          toChangeConditionTimerPause={toChangeConditionTimerPause}
         />
         <Footer
           taskCount={taskCount}
