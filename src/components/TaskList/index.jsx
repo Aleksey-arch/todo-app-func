@@ -1,15 +1,6 @@
 import { Task } from '../Task';
 
-export function TaskList({
-  selectedTodoData,
-  onToggleClick,
-  onDeleted,
-  formatTimeDifference,
-  onEdit,
-  onInputEdit,
-  toChangeConditionTimerPlay,
-  toChangeConditionTimerPause,
-}) {
+export function TaskList({ selectedTodoData, onToggleClick, onDeleted, formatTimeDifference, onEdit, onInputEdit }) {
   return (
     <div>
       {selectedTodoData.map((task) => (
@@ -21,8 +12,6 @@ export function TaskList({
           formatTimeDifference={formatTimeDifference}
           onEdit={() => onEdit(task.id)}
           onInputEdit={onInputEdit}
-          toChangeConditionTimerPlay={() => toChangeConditionTimerPlay(task.id)}
-          toChangeConditionTimerPause={() => toChangeConditionTimerPause(task.id)}
         />
       ))}
     </div>
