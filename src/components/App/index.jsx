@@ -28,18 +28,6 @@ export default function App() {
     handleFilterClick(selectedFilter);
   }, [todoData]);
 
-  // useEffect(() => {
-  //   if (selectedTask) {
-  //     console.log(secondsRemaining);
-  //     const prevTask = selectedTask.id;
-  //     const indexPrevTask = todoData.findIndex((el) => el.id === prevTask);
-  //     const oldItem = todoData[indexPrevTask];
-  //     const newItem = { ...oldItem, allSeconds: secondsRemaining };
-  //     const newArr = [...todoData.slice(0, indexPrevTask), newItem, ...todoData.slice(indexPrevTask + 1)];
-  //     setTodoData(newArr);
-  //   }
-  // }, [secondsRemaining]);
-
   const addTask = (inputValue, allSeconds) => {
     if (allSeconds === 0) {
       allSeconds = 900;
@@ -169,8 +157,6 @@ export default function App() {
   const toChangeConditionTimerPause = () => {
     setConditionTimer(false);
   };
-
-  // ////////////////////////////////////////////////////////////////////////////////
 
   return (
     <div className={classes.todo_app}>

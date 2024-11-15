@@ -1,5 +1,3 @@
-https://todo-app-func-xi.vercel.app/
-
 https://aleksey-arch.github.io/todo-app-func/
 
 # Getting Started with Create React App
